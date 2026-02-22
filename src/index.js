@@ -1,213 +1,258 @@
-document.addEventListener("DOMContentLoaded", () => {
-  initSmoothScroll();
-  initHoverEffects();
-  initTypingEffect();
-  initSkillAnimations();
-  initIntersectionAnimations();
-  initFormEnhancements();
-  initParticles();
-  initTimelineAnimations();
-  initMobileMenu();
-});
+(() => {
+  "use strict";
 
-/* -------------------------
-   Smooth Scroll Animation
-------------------------- */
-function initSmoothScroll() {
-  document.querySelectorAll('nav a[href^="?"]').forEach((link) => {
-    link.addEventListener("click", () => {
-      document.body.style.opacity = "0.8";
-      setTimeout(() => (document.body.style.opacity = "1"), 300);
-    });
-  });
-}
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* -------------------------
-   Project Card Hover
-------------------------- */
-function initHoverEffects() {
-  document.querySelectorAll(".project-card").forEach((card) => {
-    card.addEventListener(
-      "mouseenter",
-      () => (card.style.transform = "translateY(-10px) scale(1.02)")
-    );
-    card.addEventListener(
-      "mouseleave",
-      () => (card.style.transform = "translateY(0) scale(1)")
-    );
-  });
-}
+  document.addEventListener("DOMContentLoaded", init, { once: true });
 
-/* -------------------------
-   Typing Effect (Hero Title)
-------------------------- */
-function initTypingEffect() {
-  const heroTitle = document.querySelector(".hero h1");
-  if (!heroTitle) return;
-  const text = heroTitle.textContent;
-  heroTitle.textContent = "";
-  let i = 0;
-  (function type() {
-    if (i < text.length) {
-      heroTitle.textContent += text.charAt(i++);
-      setTimeout(type, 100);
-    }
-  })();
-}
-
-/* -------------------------
-   Skill Tag Animation
-------------------------- */
-function initSkillAnimations() {
-  document.querySelectorAll(".skill-tag").forEach((tag, idx) => {
-    tag.style.animation = `fadeInUp 0.6s ease forwards`;
-    tag.style.animationDelay = `${idx * 0.1}s`;
-    tag.style.opacity = "0";
-    tag.style.transform = "translateY(20px)";
-  });
-}
-
-/* -------------------------
-   Intersection Observer
-------------------------- */
-function initIntersectionAnimations() {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = "1";
-          entry.target.style.transform = "translateY(0)";
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-  );
-
-  document
-    .querySelectorAll(".skill-category, .project-card, .timeline-item")
-    .forEach((el) => {
-      el.style.opacity = "0";
-      el.style.transform = "translateY(30px)";
-      el.style.transition = "all 0.6s ease";
-      observer.observe(el);
-    });
-}
-
-/* -------------------------
-   Contact Form Enhancements
-------------------------- */
-function initFormEnhancements() {
-  const form = document.querySelector("form");
-  if (!form) return;
-
-  form.querySelectorAll("input, textarea").forEach((input) => {
-    input.addEventListener("focus", () =>
-      input.parentNode.classList.add("focused")
-    );
-    input.addEventListener("blur", () => {
-      if (!input.value) input.parentNode.classList.remove("focused");
-    });
-    input.addEventListener(
-      "input",
-      () =>
-        (input.style.borderColor = input.checkValidity()
-          ? "#10b981"
-          : "#ef4444")
-    );
-  });
-
-  form.addEventListener("submit", function () {
-    const btn = this.querySelector('button[type="submit"]');
-    const originalText = btn.textContent;
-    btn.textContent = "Sending...";
-    btn.disabled = true;
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }, 2000);
-  });
-}
-
-/* -------------------------
-   Hero Particle Effect
-------------------------- */
-function initParticles() {
-  const hero = document.querySelector(".hero");
-  if (!hero) return;
-  for (let i = 0; i < 50; i++) {
-    const p = document.createElement("div");
-    Object.assign(p.style, {
-      position: "absolute",
-      width: `${Math.random() * 4 + 2}px`,
-      height: `${Math.random() * 4 + 2}px`,
-      background: "rgba(255, 255, 255, 0.1)",
-      borderRadius: "50%",
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      animation: `float ${
-        Math.random() * 3 + 2
-      }s ease-in-out infinite alternate`,
-      pointerEvents: "none",
-    });
-    hero.appendChild(p);
+  function init() {
+    initMobileMenu();
+    initNavTransition();
+    initTypingEffect();
+    initRevealAnimations();
+    initFormEnhancements();
+    initHeroParticles();
   }
-}
 
-/* -------------------------
-   Timeline Animation
-------------------------- */
-function initTimelineAnimations() {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(
-        (entry) =>
-          entry.isIntersecting && entry.target.classList.add("animate-in")
-      );
-    },
-    { threshold: 0.3 }
-  );
+  function initMobileMenu() {
+    const nav = document.querySelector("header nav");
+    const navLinks = nav?.querySelector(".nav-links");
 
-  document.querySelectorAll(".timeline-item").forEach((item, idx) => {
-    item.style.animationDelay = `${idx * 0.2}s`;
-    observer.observe(item);
-  });
-}
-
-/* -------------------------
-   Mobile Menu
-------------------------- */
-function initMobileMenu() {
-  const nav = document.querySelector("nav");
-  if (!nav) return;
-
-  const toggle = document.createElement("button");
-  toggle.className = "menu-toggle";
-  toggle.textContent = "☰";
-  nav.appendChild(toggle);
-
-  toggle.addEventListener("click", () => {
-    const navLinks = document.querySelector(".nav-links");
-    if (navLinks) {
-      navLinks.style.display =
-        navLinks.style.display === "flex" ? "none" : "flex";
+    if (!nav || !navLinks) {
+      return;
     }
-  });
-}
 
-/* -------------------------
-   Inject Extra CSS
-------------------------- */
-(function injectCSS() {
-  const css = `
-        @keyframes float { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
-        .timeline-item.animate-in { animation: slideInLeft 0.6s ease forwards; }
-        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
-        .skill-tag, .project-card { transition: all 0.3s ease; }
-        @media (max-width: 768px) {
-            .nav-links { display: none; flex-direction: column; background: rgba(0,0,0,0.9); padding: 2rem; }
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "menu-toggle";
+    toggle.setAttribute("aria-label", "Toggle navigation menu");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", "site-navigation");
+    toggle.innerHTML = "<span></span><span></span><span></span>";
+
+    navLinks.id = "site-navigation";
+    nav.insertBefore(toggle, navLinks);
+
+    const closeMenu = () => {
+      navLinks.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+    };
+
+    const toggleMenu = () => {
+      const isOpen = navLinks.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(isOpen));
+    };
+
+    toggle.addEventListener("click", toggleMenu);
+
+    navLinks.addEventListener("click", (event) => {
+      if (event.target.closest("a")) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!window.matchMedia("(max-width: 768px)").matches) {
+        return;
+      }
+
+      if (!nav.contains(event.target)) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener(
+      "resize",
+      () => {
+        if (window.innerWidth > 768) {
+          closeMenu();
         }
-    `;
-  const style = document.createElement("style");
-  style.textContent = css;
-  document.head.appendChild(style);
+      },
+      { passive: true }
+    );
+  }
+
+  function initNavTransition() {
+    if (reduceMotion) {
+      return;
+    }
+
+    const navLinks = document.querySelectorAll('header nav a[href^="?section="]');
+    if (!navLinks.length) {
+      return;
+    }
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        document.body.classList.add("is-leaving");
+      });
+    });
+  }
+
+  function initTypingEffect() {
+    if (reduceMotion) {
+      return;
+    }
+
+    const heroTitle = document.querySelector(".hero h1");
+    if (!heroTitle) {
+      return;
+    }
+
+    const text = heroTitle.textContent?.trim();
+    if (!text) {
+      return;
+    }
+
+    heroTitle.textContent = "";
+    heroTitle.setAttribute("aria-label", text);
+
+    let index = 1;
+    const type = () => {
+      heroTitle.textContent = text.slice(0, index);
+      index += 1;
+
+      if (index <= text.length + 1) {
+        window.setTimeout(type, 45);
+      }
+    };
+
+    type();
+  }
+
+  function initRevealAnimations() {
+    const targets = Array.from(
+      document.querySelectorAll(".skill-category, .project-card, .timeline-item, .contact-item")
+    );
+
+    if (!targets.length) {
+      return;
+    }
+
+    targets.forEach((target, index) => {
+      target.classList.add("reveal");
+      target.style.setProperty("--reveal-delay", `${Math.min(index * 40, 260)}ms`);
+    });
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      targets.forEach((target) => target.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.14,
+        rootMargin: "0px 0px -8% 0px",
+      }
+    );
+
+    targets.forEach((target) => observer.observe(target));
+  }
+
+  function initFormEnhancements() {
+    const form = document.querySelector(".contact-form form");
+    if (!form) {
+      return;
+    }
+
+    const fields = form.querySelectorAll("input, textarea");
+
+    fields.forEach((field) => {
+      const group = field.closest(".form-group");
+      syncFieldState(field, group);
+
+      field.addEventListener("focus", () => {
+        group?.classList.add("is-focused");
+      });
+
+      field.addEventListener("blur", () => {
+        syncFieldState(field, group);
+      });
+
+      field.addEventListener("input", () => {
+        syncFieldState(field, group);
+      });
+    });
+
+    form.addEventListener("submit", (event) => {
+      const button = form.querySelector('button[type="submit"]');
+
+      if (!form.checkValidity()) {
+        event.preventDefault();
+
+        fields.forEach((field) => {
+          syncFieldState(field, field.closest(".form-group"), true);
+        });
+
+        return;
+      }
+
+      if (button) {
+        button.disabled = true;
+        button.classList.add("is-submitting");
+        button.textContent = "Sending...";
+      }
+    });
+  }
+
+  function syncFieldState(field, group, forceValidation = false) {
+    if (!group) {
+      return;
+    }
+
+    const value = field.value.trim();
+    const hasValue = value.length > 0;
+    const shouldValidate = forceValidation || hasValue;
+
+    group.classList.toggle("is-focused", hasValue || document.activeElement === field);
+    group.classList.toggle("is-invalid", shouldValidate && !field.checkValidity());
+    field.setAttribute("aria-invalid", String(shouldValidate && !field.checkValidity()));
+  }
+
+  function initHeroParticles() {
+    if (reduceMotion) {
+      return;
+    }
+
+    const hero = document.querySelector(".hero");
+    if (!hero) {
+      return;
+    }
+
+    const particleCount = window.matchMedia("(max-width: 768px)").matches ? 12 : 20;
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < particleCount; i += 1) {
+      const particle = document.createElement("span");
+      particle.className = "hero-particle";
+      particle.style.setProperty("--size", `${randomBetween(2, 5.5)}px`);
+      particle.style.setProperty("--left", `${randomBetween(0, 100)}%`);
+      particle.style.setProperty("--top", `${randomBetween(3, 92)}%`);
+      particle.style.setProperty("--duration", `${randomBetween(5.5, 12)}s`);
+      particle.style.setProperty("--delay", `${randomBetween(0, 5.5)}s`);
+      fragment.appendChild(particle);
+    }
+
+    hero.appendChild(fragment);
+  }
+
+  function randomBetween(min, max) {
+    return (Math.random() * (max - min) + min).toFixed(2);
+  }
 })();
