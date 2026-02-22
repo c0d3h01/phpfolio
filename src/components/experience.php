@@ -1,4 +1,9 @@
-<?php if ($section === 'experience'): ?>
+<?php
+declare(strict_types=1);
+
+function renderExperienceSection(array $experience): void
+{
+    ?>
     <section class="content-section">
         <div class="container">
             <div class="section-header">
@@ -9,13 +14,13 @@
                 <?php foreach ($experience as $job): ?>
                     <div class="timeline-item">
                         <div class="timeline-content">
-                            <div class="timeline-date"><?php echo $job['duration']; ?></div>
-                            <h3 class="timeline-title"><?php echo $job['position']; ?></h3>
-                            <div class="timeline-company"><?php echo $job['company']; ?></div>
-                            <p><?php echo $job['description']; ?></p>
+                            <div class="timeline-date"><?= h($job['duration']) ?></div>
+                            <h3 class="timeline-title"><?= h($job['position']) ?></h3>
+                            <div class="timeline-company"><?= h($job['company']) ?></div>
+                            <p><?= h($job['description']) ?></p>
                             <ul class="achievements">
                                 <?php foreach ($job['achievements'] as $achievement): ?>
-                                    <li><?php echo $achievement; ?></li>
+                                    <li><?= h((string) $achievement) ?></li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
@@ -24,4 +29,5 @@
             </div>
         </div>
     </section>
-<?php endif; ?>
+    <?php
+}
