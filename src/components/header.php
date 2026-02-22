@@ -1,22 +1,23 @@
-<header>
-    <nav class="container">
-        <a href="?section=home" class="logo"><?= htmlspecialchars($developer['name']) ?></a>
+<?php
+declare(strict_types=1);
 
-        <ul class="nav-links">
-            <?php
-            $navItems = [
-                'home' => 'Home',
-                'skills' => 'Skills',
-                'projects' => 'Projects',
-                'experience' => 'Experience',
-                'contact' => 'Contact'
-            ];
-
-            foreach ($navItems as $key => $label) {
-                $active = ($section === $key) ? 'active' : '';
-                echo "<li><a href=\"?section={$key}\" class=\"{$active}\">{$label}</a></li>";
-            }
-            ?>
-        </ul>
-    </nav>
-</header>
+function renderHeader(array $developer, array $navItems, string $currentSection): void
+{
+    ?>
+    <header>
+        <nav class="container">
+            <a href="<?= section_url('home') ?>" class="logo"><?= h($developer['name']) ?></a>
+            <ul class="nav-links">
+                <?php foreach ($navItems as $sectionKey => $label): ?>
+                    <?php $isActive = $currentSection === $sectionKey; ?>
+                    <li>
+                        <a href="<?= section_url((string) $sectionKey) ?>"<?= $isActive ? ' class="active"' : '' ?>>
+                            <?= h((string) $label) ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </nav>
+    </header>
+    <?php
+}
