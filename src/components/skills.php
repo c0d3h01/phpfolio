@@ -1,4 +1,9 @@
-<?php if ($section === 'skills'): ?>
+<?php
+declare(strict_types=1);
+
+function renderSkillsSection(array $skills): void
+{
+    ?>
     <section class="content-section">
         <div class="container">
             <div class="section-header">
@@ -8,10 +13,10 @@
             <div class="skills-grid">
                 <?php foreach ($skills as $category => $skillList): ?>
                     <div class="skill-category">
-                        <h3><?php echo $category; ?></h3>
+                        <h3><?= h((string) $category) ?></h3>
                         <div class="skills-list">
                             <?php foreach ($skillList as $skill): ?>
-                                <span class="skill-tag"><?php echo $skill; ?></span>
+                                <span class="skill-tag"><?= h((string) $skill) ?></span>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -19,4 +24,5 @@
             </div>
         </div>
     </section>
-<?php endif; ?>
+    <?php
+}
