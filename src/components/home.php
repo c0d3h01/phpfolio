@@ -1,13 +1,19 @@
-<?php if ($section === 'home'): ?>
+<?php
+declare(strict_types=1);
+
+function renderHomeSection(array $developer): void
+{
+    ?>
     <section class="hero">
         <div class="container hero-content">
-            <h1><?php echo $developer['name']; ?></h1>
-            <p class="subtitle"><?php echo $developer['title']; ?></p>
-            <p class="bio"><?php echo $developer['bio']; ?></p>
+            <h1><?= h($developer['name']) ?></h1>
+            <p class="subtitle"><?= h($developer['title']) ?></p>
+            <p class="bio"><?= h($developer['bio']) ?></p>
             <div class="cta-buttons">
-                <a href="?section=projects" class="btn btn-primary">View My Work</a>
-                <a href="?section=contact" class="btn btn-outline">Get In Touch</a>
+                <a href="<?= section_url('projects') ?>" class="btn btn-primary">View My Work</a>
+                <a href="<?= section_url('contact') ?>" class="btn btn-outline">Get In Touch</a>
             </div>
         </div>
     </section>
-<?php endif; ?>
+    <?php
+}
